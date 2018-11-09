@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vue Lunch & Learn</title>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div id="app">
+        <h1>To-Do:</h1>
+        <div>
+          <input v-model="newItem.text" type="text" />
+          <button type="button" @click="addItem">+</button>
+        </div>
+        <div class="todo" v-for="(item, index) in items">
+          <input type="checkbox" v-model="item.done" />
+          <span :class="{ done: item.done }">{{ item.text }}</span>
+          <button type="button" @click="removeItem(index)">x</button>
+        </div>
+        <h3 v-if="items.length === 0">Add a to-do item!</h3>
+        <h3 v-else-if="items.length === doneItems">All Done!</h3>
+        <div v-else>
+          <div>{{ items.length }} Items / {{ doneItems }} Done</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var app = new Vue({
+        el: '#app',
+        data: {
+          newItem: {
+            done: false,
+            text: ''
+          },
+          items: []
+        },
+        computed: {
+          doneItems: function() {
+            return this.items.filter(x => x.done).length;
+          }
+        },
+        watch: {
+          'newItem.text': function(after) {
+            // shallow watch
+            console.log('Item text changed: ' + after);
+          },
+          items: {
+              // deep watch
+              deep: true, // set to false and notice toggling "done" no longer fires the console trace
+              handler: function(after, before) {
+                  console.log(after)
+              }
+          }
+        },
+        methods: {
+          addItem: function() {
+            this.items.push({ ...this.newItem });
+          },
+          removeItem: function(index) {
+            this.items.splice(index, 1);
+          }
+        }
+      });
+    </script>
+
+    <style>
+      .container {
+        width: 100%;
+        text-align: center;
+      }
+
+      #app {
+        width: 300px;
+        margin: 80px auto;
+      }
+
+      .done {
+        text-decoration: line-through;
+      }
+
+      .todo {
+        padding: 8px;
+        border: 1px solid #777;
+        width: 75%;
+        margin: 8px auto;
+        border-radius: 4px;
+        text-align: left;
+      }
+
+      .todo button {
+        float: right;
+      }
+
+      div {
+        margin: 8px;
+      }
+    </style>
+  </body>
+</html>
